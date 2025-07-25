@@ -5,7 +5,7 @@ from src.models import ScenarioConfig
 
 # Basic weekday scenario with constant staffing for a large store
 WEEKDAY_BASIC_LARGE = ScenarioConfig(
-    name="Weekday Basic - 3 Desks",
+    name="Weekday Large Store - 3 Desks",
     arrival_rates={
         10: 6,  # 10-11am: 6 customers/hour
         11: 8,  # 11-12pm: 8 customers/hour
@@ -28,7 +28,7 @@ WEEKDAY_BASIC_LARGE = ScenarioConfig(
 
 # Basic weekday scenario with constant staffing for a small store
 WEEKDAY_BASIC_SMALL = ScenarioConfig(
-    name="Weekday Basic - 2 Desks",
+    name="Weekday Small Store - 2 Desks",
     arrival_rates={
         10: 6,  # 10-11am: 6 customers/hour
         11: 9,  # 11-12pm: 8 customers/hour
@@ -51,7 +51,7 @@ WEEKDAY_BASIC_SMALL = ScenarioConfig(
 
 # Peak season scenario with variable staffing
 PEAKSEASON_DAY_VARIABLE = ScenarioConfig(
-    name="Peak Day - Variable Staffing",
+    name="Peak Season - Variable Staffing",
     arrival_rates={
         10: 28,  # 10-11am: 28 customers/hour
         11: 40,  # 11-12pm: 40 customers/hour

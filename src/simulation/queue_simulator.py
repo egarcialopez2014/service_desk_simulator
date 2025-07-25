@@ -167,6 +167,7 @@ class QueueSimulator:
         
         avg_wait_time = np.mean(wait_times)
         max_wait_time = np.max(wait_times)
+        p95_wait_time = np.percentile(wait_times, 95)
         
         # Calculate queue statistics
         avg_queue_length = np.mean(queue_length_history) if queue_length_history else 0
@@ -191,6 +192,7 @@ class QueueSimulator:
             scenario_name=scenario.name,
             avg_wait_time=avg_wait_time,
             max_wait_time=max_wait_time,
+            p95_wait_time=p95_wait_time,
             avg_queue_length=avg_queue_length,
             max_queue_length=max_queue_length,
             desk_utilization=desk_utilization,
@@ -205,6 +207,7 @@ class QueueSimulator:
             scenario_name=scenario.name,
             avg_wait_time=0.0,
             max_wait_time=0.0,
+            p95_wait_time=0.0,
             avg_queue_length=0.0,
             max_queue_length=0,
             desk_utilization=0.0,

@@ -109,6 +109,7 @@ class MonteCarloRunner:
         metrics = {
             'avg_wait_time': [r.avg_wait_time for r in results],
             'max_wait_time': [r.max_wait_time for r in results],
+            'p95_wait_time': [r.p95_wait_time for r in results],
             'avg_queue_length': [r.avg_queue_length for r in results],
             'desk_utilization': [r.desk_utilization for r in results],
             'service_level_5min': [r.service_level_5min for r in results],
@@ -135,6 +136,7 @@ class MonteCarloRunner:
             # Mean values
             avg_wait_time=means['avg_wait_time'],
             max_wait_time=means['max_wait_time'],
+            p95_wait_time=means['p95_wait_time'],
             avg_queue_length=means['avg_queue_length'],
             desk_utilization=means['desk_utilization'],
             service_level_5min=means['service_level_5min'],
@@ -142,6 +144,7 @@ class MonteCarloRunner:
             # Confidence intervals
             avg_wait_time_ci=confidence_intervals['avg_wait_time_ci'],
             max_wait_time_ci=confidence_intervals['max_wait_time_ci'],
+            p95_wait_time_ci=confidence_intervals['p95_wait_time_ci'],
             avg_queue_length_ci=confidence_intervals['avg_queue_length_ci'],
             desk_utilization_ci=confidence_intervals['desk_utilization_ci'],
             service_level_5min_ci=confidence_intervals['service_level_5min_ci'],
@@ -213,6 +216,7 @@ Number of simulations: {results.num_simulations}
 Key Metrics (95% Confidence Intervals):
 --------------------------------------
 Average Wait Time: {results.avg_wait_time:.2f} minutes ({results.avg_wait_time_ci[0]:.2f} - {results.avg_wait_time_ci[1]:.2f})
+95th Percentile Wait Time: {results.p95_wait_time:.2f} minutes ({results.p95_wait_time_ci[0]:.2f} - {results.p95_wait_time_ci[1]:.2f})
 Maximum Wait Time: {results.max_wait_time:.2f} minutes ({results.max_wait_time_ci[0]:.2f} - {results.max_wait_time_ci[1]:.2f})
 Average Queue Length: {results.avg_queue_length:.2f} customers ({results.avg_queue_length_ci[0]:.2f} - {results.avg_queue_length_ci[1]:.2f})
 Desk Utilization: {results.desk_utilization:.1%} ({results.desk_utilization_ci[0]:.1%} - {results.desk_utilization_ci[1]:.1%})

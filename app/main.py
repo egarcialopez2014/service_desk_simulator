@@ -271,8 +271,8 @@ def display_results(results):
     """Display simulation results."""
     st.header("📊 Simulation Results")
     
-    # Key metrics
-    col1, col2, col3, col4 = st.columns(4)
+    # Key metrics - using 5 columns now to include 95th percentile
+    col1, col2, col3, col4, col5 = st.columns(5)
     
     with col1:
         st.metric(
@@ -283,19 +283,26 @@ def display_results(results):
     
     with col2:
         st.metric(
+            "95th Percentile Wait",
+            f"{results.p95_wait_time:.2f} min",
+            help="95% of customers wait less than this time"
+        )
+    
+    with col3:
+        st.metric(
             "Maximum Wait Time",
             f"{results.max_wait_time:.2f} min",
             help="Longest wait time experienced by any customer"
         )
     
-    with col3:
+    with col4:
         st.metric(
             "Service Level (≤5 min)",
             f"{results.service_level_5min:.1%}",
             help="Percentage of customers served within 5 minutes"
         )
     
-    with col4:
+    with col5:
         st.metric(
             "Desk Utilization",
             f"{results.desk_utilization:.1%}",
@@ -308,6 +315,7 @@ def display_results(results):
     metrics_data = {
         "Metric": [
             "Average Wait Time (min)",
+            "95th Percentile Wait Time (min)",
             "Maximum Wait Time (min)",
             "Average Queue Length",
             "Desk Utilization (%)",
@@ -315,6 +323,7 @@ def display_results(results):
         ],
         "Value": [
             f"{results.avg_wait_time:.2f}",
+            f"{results.p95_wait_time:.2f}",
             f"{results.max_wait_time:.2f}",
             f"{results.avg_queue_length:.2f}",
             f"{results.desk_utilization:.1%}",
@@ -322,6 +331,7 @@ def display_results(results):
         ],
         "95% CI Lower": [
             f"{results.avg_wait_time_ci[0]:.2f}",
+            f"{results.p95_wait_time_ci[0]:.2f}",
             f"{results.max_wait_time_ci[0]:.2f}",
             f"{results.avg_queue_length_ci[0]:.2f}",
             f"{results.desk_utilization_ci[0]:.1%}",
@@ -329,6 +339,7 @@ def display_results(results):
         ],
         "95% CI Upper": [
             f"{results.avg_wait_time_ci[1]:.2f}",
+            f"{results.p95_wait_time_ci[1]:.2f}",
             f"{results.max_wait_time_ci[1]:.2f}",
             f"{results.avg_queue_length_ci[1]:.2f}",
             f"{results.desk_utilization_ci[1]:.1%}",

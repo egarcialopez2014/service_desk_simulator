@@ -34,6 +34,7 @@ def run_all_scenarios():
             
             # Display key metrics
             print(f"✅ Average Wait Time: {result.avg_wait_time:.2f} minutes")
+            print(f"✅ 95th Percentile Wait Time: {result.p95_wait_time:.2f} minutes")
             print(f"✅ Maximum Wait Time: {result.max_wait_time:.2f} minutes")
             print(f"✅ Service Level (≤5min): {result.service_level_5min:.1%}")
             print(f"✅ Desk Utilization: {result.desk_utilization:.1%}")
@@ -48,13 +49,13 @@ def run_all_scenarios():
     # Summary comparison
     if results:
         print("SCENARIO COMPARISON SUMMARY")
-        print("=" * 110)
-        print(f"{'Scenario':<25} {'Avg Wait':<10} {'Max Wait':<10} {'Service Level':<14} {'Utilization':<12} {'Customers':<12}")
-        print("-" * 110)
+        print("=" * 130)
+        print(f"{'Scenario':<25} {'Avg Wait':<10} {'P95 Wait':<10} {'Max Wait':<10} {'Service Level':<14} {'Utilization':<12} {'Customers':<12}")
+        print("-" * 130)
         
         for result in results:
             name = result.scenario_name[:24]  # Truncate long names
-            print(f"{name:<25} {result.avg_wait_time:>6.2f} min {result.max_wait_time:>6.2f} min {result.service_level_5min:>10.1%} {result.desk_utilization:>10.1%} {result.total_customers_mean:>8.0f}")
+            print(f"{name:<25} {result.avg_wait_time:>6.2f} min {result.p95_wait_time:>6.2f} min {result.max_wait_time:>6.2f} min {result.service_level_5min:>10.1%} {result.desk_utilization:>10.1%} {result.total_customers_mean:>8.0f}")
 
 
 def run_single_scenario(scenario_name=None):

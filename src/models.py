@@ -119,6 +119,7 @@ class SimulationResults(BaseModel):
     scenario_name: str
     avg_wait_time: float = Field(..., description="Average waiting time in minutes")
     max_wait_time: float = Field(..., description="Maximum waiting time in minutes")
+    p95_wait_time: float = Field(..., description="95th percentile waiting time in minutes")
     avg_queue_length: float = Field(..., description="Average queue length")
     max_queue_length: int = Field(..., description="Maximum queue length")
     desk_utilization: float = Field(..., description="Average desk utilization rate")
@@ -136,6 +137,7 @@ class MonteCarloResults(BaseModel):
     # Average metrics
     avg_wait_time: float
     max_wait_time: float
+    p95_wait_time: float
     avg_queue_length: float
     desk_utilization: float
     service_level_5min: float
@@ -143,6 +145,7 @@ class MonteCarloResults(BaseModel):
     # Confidence intervals (95%)
     avg_wait_time_ci: Tuple[float, float]
     max_wait_time_ci: Tuple[float, float]
+    p95_wait_time_ci: Tuple[float, float]
     avg_queue_length_ci: Tuple[float, float]
     desk_utilization_ci: Tuple[float, float]
     service_level_5min_ci: Tuple[float, float]
