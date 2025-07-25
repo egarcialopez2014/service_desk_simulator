@@ -62,21 +62,30 @@ class ArrivalGenerator:
         
         return arrival_times.tolist()
     
-    def generate_service_times(self, num_customers: int, mean_service_time: float) -> List[float]:
-        """Generate service times using exponential distribution.
+    def generate_service_times(self, num_customers: int, mean_service_time: float, 
+                             coefficient_of_variation: float = 0.5) -> List[float]:
+        """Generate service times using lognormal distribution.
         
         Args:
             num_customers: Number of service times to generate
             mean_service_time: Mean service time in minutes
-            
+            coefficient_of_variation: Ratio of std deviation to mean (default 0.5)
+                                    Higher values = more variability
+                                    
         Returns:
             List of service times in minutes
         """
         if num_customers == 0:
             return []
         
-        # Use exponential distribution with given mean
-        service_times = self.rng.exponential(mean_service_time, num_customers)
+        # Use lognormal distribution with given mean and coefficient of variation
+        # For lognormal: mean = exp(mu + sigma^2/2)
+        # CV = sqrt(exp(sigma^2) - 1), so sigma = sqrt(ln(CV^2 + 1))
+        cv = coefficient_of_variation
+        sigma = np.sqrt(np.log(cv**2 + 1))
+        mu = np.log(mean_service_time) - sigma**2 / 2
+        
+        service_times = self.rng.lognormal(mu, sigma, num_customers)
         return service_times.tolist()
     
     def validate_arrival_pattern(self, arrival_rates: Dict[int, float], 

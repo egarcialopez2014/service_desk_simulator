@@ -113,14 +113,36 @@ def create_custom_scenario_ui():
     """Create UI for building custom scenarios."""
     st.subheader("Custom Scenario Configuration")
     
-    scenario_name = st.sidebar.text_input("Scenario Name", "My Custom Scenario")
+    # Option to start from a template
+    use_template = st.sidebar.checkbox("Start from existing scenario template", value=False)
+    
+    template_scenario = None
+    if use_template:
+        template_names = ["None"] + [s.name for s in ALL_SCENARIOS]
+        selected_template = st.sidebar.selectbox("Select Template", template_names)
+        
+        if selected_template != "None":
+            template_scenario = next((s for s in ALL_SCENARIOS if s.name == selected_template), None)
+            if template_scenario:
+                st.sidebar.success(f"✅ Template loaded: {selected_template}")
+                st.sidebar.write("💡 All fields below are pre-filled. Modify as needed.")
+    
+    # Pre-populate values from template or use defaults
+    default_name = template_scenario.name + " (Custom)" if template_scenario else "My Custom Scenario"
+    default_start = template_scenario.operating_hours[0] if template_scenario else 9
+    default_end = template_scenario.operating_hours[1] if template_scenario else 18
+    default_service_time = template_scenario.mean_service_time if template_scenario else 8.5
+    default_num_desks = template_scenario.num_desks if template_scenario and template_scenario.num_desks else 3
+    default_staffing_type = "Variable" if template_scenario and template_scenario.desk_schedule else "Constant"
+    
+    scenario_name = st.sidebar.text_input("Scenario Name", default_name)
     
     # Operating hours
     col1, col2 = st.sidebar.columns(2)
     with col1:
-        start_hour = st.selectbox("Start Hour", range(0, 24), index=9)
+        start_hour = st.selectbox("Start Hour", range(0, 24), index=default_start)
     with col2:
-        end_hour = st.selectbox("End Hour", range(1, 25), index=18)
+        end_hour = st.selectbox("End Hour", range(1, 25), index=default_end)
     
     if start_hour >= end_hour:
         st.sidebar.error("End hour must be after start hour")
@@ -129,27 +151,33 @@ def create_custom_scenario_ui():
     # Service time
     mean_service_time = st.sidebar.slider(
         "Mean Service Time (minutes)", 
-        min_value=1.0, 
-        max_value=30.0, 
-        value=8.5,
-        step=0.5
+        min_value=0.5, 
+        max_value=5.0, 
+        value=min(float(default_service_time), 5.0),  # Cap default at 5.0
+        step=0.1
     )
     
     # Staffing configuration
-    staffing_type = st.sidebar.radio("Staffing Type", ["Constant", "Variable"])
+    staffing_type = st.sidebar.radio("Staffing Type", ["Constant", "Variable"], 
+                                   index=0 if default_staffing_type == "Constant" else 1)
     
     if staffing_type == "Constant":
-        num_desks = st.sidebar.slider("Number of Desks", min_value=1, max_value=10, value=3)
+        num_desks = st.sidebar.slider("Number of Desks", min_value=1, max_value=10, value=default_num_desks)
         desk_schedule = None
     else:
         st.sidebar.write("Configure desk schedule by hour:")
         desk_schedule = {}
         for hour in range(start_hour, end_hour):
+            # Default desk count from template or use 3
+            default_desk_count = 3
+            if template_scenario and template_scenario.desk_schedule and hour in template_scenario.desk_schedule:
+                default_desk_count = template_scenario.desk_schedule[hour]
+            
             desks = st.sidebar.slider(
                 f"{hour}:00-{hour+1}:00", 
                 min_value=1, 
                 max_value=10, 
-                value=3,
+                value=default_desk_count,
                 key=f"desk_{hour}"
             )
             desk_schedule[hour] = desks
@@ -157,7 +185,16 @@ def create_custom_scenario_ui():
     
     # Arrival rates configuration
     st.write("### Arrival Rates Configuration")
-    st.write("Configure expected customer arrivals per hour:")
+    if template_scenario:
+        # Show template info in an info box
+        st.info(f"� **Template:** {template_scenario.name}\n\n"
+                f"• **Operating Hours:** {template_scenario.operating_hours[0]}:00 - {template_scenario.operating_hours[1]}:00\n"
+                f"• **Service Time:** {template_scenario.mean_service_time} min\n"
+                f"• **Staffing:** {'Constant (' + str(template_scenario.num_desks) + ' desks)' if template_scenario.num_desks else 'Variable'}\n"
+                f"• **Daily Customers:** ~{sum(template_scenario.arrival_rates.values())} customers/day")
+        st.write("**Modify the values below as needed:**")
+    else:
+        st.write("Configure expected customer arrivals per hour:")
     
     arrival_rates = {}
     cols = st.columns(min(4, end_hour - start_hour))
@@ -165,11 +202,16 @@ def create_custom_scenario_ui():
     for i, hour in enumerate(range(start_hour, end_hour)):
         col_idx = i % len(cols)
         with cols[col_idx]:
+            # Default arrival rate from template or use 10
+            default_rate = 10.0
+            if template_scenario and hour in template_scenario.arrival_rates:
+                default_rate = float(template_scenario.arrival_rates[hour])
+            
             rate = st.number_input(
                 f"{hour}:00-{hour+1}:00",
                 min_value=0.0,
-                max_value=100.0,
-                value=10.0,
+                max_value=200.0,
+                value=default_rate,
                 step=1.0,
                 key=f"arrival_{hour}"
             )
