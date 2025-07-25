@@ -7,6 +7,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import sys
 import os
+import hashlib
 
 # Add the src directory to the path
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
@@ -20,6 +21,78 @@ if 'examples.scenarios' in sys.modules:
     importlib.reload(sys.modules['examples.scenarios'])
 from examples.scenarios import ALL_SCENARIOS
 
+# Password configuration - Change this for production deployment
+APP_PASSWORD = os.getenv("STREAMLIT_PASSWORD", "ClickCollect2025")  # Use env var or default
+
+
+def check_password():
+    """Returns True if the user entered the correct password."""
+    
+    def password_entered():
+        """Checks whether a password entered by the user is correct."""
+        if st.session_state["password"] == APP_PASSWORD:
+            st.session_state["password_correct"] = True
+            del st.session_state["password"]  # Don't store password
+        else:
+            st.session_state["password_correct"] = False
+
+    if "password_correct" not in st.session_state:
+        # First run, show password input
+        st.markdown("""
+        <div style="text-align: center; padding: 2rem;">
+            <h1>🔐 Secure Access Required</h1>
+            <h3>Click & Collect Queue Simulation System</h3>
+            <p style="color: #666;">Enter your password to access the simulation platform</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Center the password input
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            st.text_input(
+                "Password", 
+                type="password", 
+                on_change=password_entered, 
+                key="password",
+                help="Contact your administrator if you don't have the password",
+                placeholder="Enter password..."
+            )
+            st.info("💡 **Demo Access**: Use password `ClickCollect2025`")
+            
+        return False
+    elif not st.session_state["password_correct"]:
+        # Password incorrect, show input + error
+        st.markdown("""
+        <div style="text-align: center; padding: 2rem;">
+            <h1>🔐 Secure Access Required</h1>
+            <h3>Click & Collect Queue Simulation System</h3>
+            <p style="color: #666;">Enter your password to access the simulation platform</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            st.text_input(
+                "Password", 
+                type="password", 
+                on_change=password_entered, 
+                key="password",
+                help="Contact your administrator if you don't have the password",
+                placeholder="Enter password..."
+            )
+            st.error("❌ **Access Denied**: Incorrect password. Please try again.")
+            
+        return False
+    else:
+        # Password correct
+        return True
+
+
+def logout():
+    """Clear the password state to force re-authentication."""
+    if "password_correct" in st.session_state:
+        del st.session_state["password_correct"]
+
 
 def main():
     """Main Streamlit application."""
@@ -28,6 +101,18 @@ def main():
         page_icon="🛒",
         layout="wide"
     )
+    
+    # Check password before showing the app
+    if not check_password():
+        return
+    
+    # Welcome message and logout option in sidebar
+    st.sidebar.success("✅ **Authenticated**")
+    if st.sidebar.button("🔓 Logout", help="Click to logout and require password again"):
+        logout()
+        st.rerun()  # Refresh the app to show login screen
+    
+    st.sidebar.markdown("---")  # Separator line
     
     st.title("🛒 Click & Collect Queue Simulation System")
     st.markdown("""
