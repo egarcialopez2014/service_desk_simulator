@@ -156,7 +156,7 @@ POZUELO_2012 = ScenarioConfig(
 )
 
 POZUELO_2012_VAR = ScenarioConfig(
-    name="Pozuelo 2012, 4 Desks",
+    name="Pozuelo 2012, Variable Desks",
     arrival_rates={
         10: 75,  # 10-11am: 75 customers/hour
         11: 47,  # 11-12pm: 47 customers/hour
