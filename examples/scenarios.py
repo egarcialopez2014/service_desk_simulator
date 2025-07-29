@@ -197,6 +197,7 @@ ALL_SCENARIOS = [
     PEAKSEASON_DAY_VARIABLE,
     WEEKEND_SCENARIO,
     EFFICIENT_ORDERS,
-    POZUELO_2012
+    POZUELO_2012,
+    POZUELO_2012_VAR,
     # Additional scenarios can be added here
 ]
