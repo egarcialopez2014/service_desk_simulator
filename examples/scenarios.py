@@ -132,6 +132,29 @@ EFFICIENT_ORDERS = ScenarioConfig(
     num_simulations=1000
 )
 
+# Low service time scenario (efficient service) for Large Store
+POZUELO_2012 = ScenarioConfig(
+    name="Pozuelo 2012, 4 Desks",
+    arrival_rates={
+        10: 75,  # 10-11am: 75 customers/hour
+        11: 47,  # 11-12pm: 47 customers/hour
+        12: 59,  # 12-1pm: 59 customers/hour (lunch peak)
+        13: 44,  # 1-2pm: 44 customers/hour
+        14: 50,  # 2-3pm: 15 customers/hour
+        15: 44,  # 3-4pm: 12 customers/hour
+        16: 59,   # 4-5pm: 12 customers/hour
+        17: 60,   # 5-6pm: 19 customers/hour
+        18: 54,   # 6-7pm: 20 customers/hour
+        19: 54,   # 7-8pm: 21 customers/hour
+        20: 46,    # 8-9pm: 22 customers/hour
+        21: 39,   # 9-10pm: 10 customers/hour    
+    },
+    num_desks=4,
+    mean_service_time=4.35,  # 2.0 minutes average service time
+    operating_hours=(10, 22),  # 10am to 10pm
+    num_simulations=1000
+)
+
 # All example scenarios
 ALL_SCENARIOS = [
     WEEKDAY_BASIC_LARGE,
@@ -139,5 +162,6 @@ ALL_SCENARIOS = [
     PEAKSEASON_DAY_VARIABLE,
     WEEKEND_SCENARIO,
     EFFICIENT_ORDERS,
+    POZUELO_2012
     # Additional scenarios can be added here
 ]
